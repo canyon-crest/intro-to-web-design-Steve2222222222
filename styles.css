@@ -5,7 +5,7 @@ body{
     
 }
 #container{
-    width:800px;
+    width:1000px;
     margin:0 auto;
     background-color:#9bcede;
     padding:20px;
@@ -78,4 +78,61 @@ a:active{
     font-weight:bold;
     background-color:yellow;
     padding:3px;
+}
+
+#sidebar{
+    background-color: #b3abe3;
+    width: 225px;
+    float:right;
+    border:2px solid white;
+    margin-left:15px;
+    margin-top: 60px;
+    line-height: 2.25em;
+
+}
+#sidebar h3{
+    width:200px;
+    border: none;
+    color:rgb(255, 0, 4);
+    padding-left: 15px;
+    text-decoration: underline;
+    
+}
+@media (max-width:1200px){
+    #container{
+        width:800px;
+    }
+}
+@media (max-width:992px){
+    #container{
+        width:100%;
+    }
+    #container, p{
+        margin:0;
+        padding:0;
+        border:none;
+    }
+    body,h1,h2,h3,p,div{
+        background-color:#9bcede !important;
+        border: none;
+    }
+    body{
+        padding:20px;
+    }
+    p{
+        text-align:justify;
+    }
+}
+@media (max-width:768px){
+    #sidebar{
+        display:none;
+    }
+    img,#climbingpic,#frcpic,#dopaminepic{
+        float:none !important;
+        border:none;
+        width:100%
+    }
+    h3{
+        margin:0 auto;
+    }
 }
