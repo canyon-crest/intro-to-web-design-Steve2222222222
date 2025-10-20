@@ -1,6 +1,14 @@
 body{
-    background-color:#caf0f8;
-    color:rgb(0, 0, 0);
+    /* base colors kept from your palette */
+    --bg-1: #caf0f8;
+    --bg-2: #ade8f4;
+    --bg-3: #90e0ef;
+    --accent: #00b4d8;
+
+    background: linear-gradient(120deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    background-size: 300% 300%;
+    animation: bgShift 18s ease-in-out infinite;
+    color: rgb(0, 0, 0);
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     
 }
@@ -12,15 +20,151 @@ body{
     border:#000 solid 2px;
 
 }
-h1{
 
-    border:#90e0ef, solid, 3px;
+/* Animated background shift */
+@keyframes bgShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+/* Soft floating blurred blobs for depth */
+body::before, body::after{
+    content: "";
+    position: fixed;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(64px) saturate(120%);
+    opacity: 0.55;
+}
+body::before{
+    width:420px; height:420px;
+    left:-80px; top:-60px;
+    background: radial-gradient(circle at 30% 30%, #ffd86b 0%, transparent 45%);
+    animation: blobMove1 13s ease-in-out infinite;
+}
+body::after{
+    width:480px; height:480px;
+    right:-120px; bottom:-80px;
+    background: radial-gradient(circle at 70% 70%, var(--accent) 0%, transparent 45%);
+    animation: blobMove2 17s ease-in-out infinite;
+}
+@keyframes blobMove1{ 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(24px) } }
+@keyframes blobMove2{ 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-28px) } }
+
+/* Vignette to focus center content */
+body::after{ box-shadow: inset 0 0 220px rgba(0,0,0,0.03); }
+
+/* Subtle noise texture (SVG data URI) for tactile look */
+body{
+    background-image: linear-gradient(120deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.03'/></svg>");
+    background-blend-mode: overlay;
+}
+
+/* Glassmorphism for sidebar */
+#sidebar{
+    background: rgba(255,255,255,0.45);
+    backdrop-filter: blur(6px) saturate(1.05);
+    border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Inline paragraph link lift (depth effect). Applied to links inside paragraphs only */
+p a{
+    transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s, color .18s;
+    display: inline-block; /* allow transform without breaking line-height */
+    position: relative;
+    -webkit-tap-highlight-color: transparent; /* remove blue tap highlight on mobile */
+    outline: none; /* remove default outline; we'll use focus-visible for keyboard */
+}
+
+/* Hover effect for pointer users */
+p a:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(2,6,23,0.12);
+}
+
+/* Only show the stronger focus ring for keyboard users */
+/* keep focusable for assistive tech; visual ring is handled with :focus-visible */
+
+p a:focus-visible{
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(2,6,23,0.18), 0 0 0 3px rgba(0,180,216,0.12);
+}
+
+/* If an element receives focus but it's not from keyboard (no focus-visible), don't show the visual styles */
+p a:focus:not(:focus-visible){
+    box-shadow: none;
+    transform: none;
+}
+
+/* Clear any default background color that some browsers add on :active / :focus */
+a, a:active, a:focus{ background-color: transparent; }
+
+/* Ensure anchors don't get a forced highlight color on tap for all anchors */
+a{ -webkit-tap-highlight-color: transparent; }
+
+/* highlight styling handled later (plain yellow background) */
+
+/* Make sure content sits above decorative layers */
+#container{ position: relative; z-index: 1; }
+
+/* Performance & accessibility */
+@media (prefers-reduced-motion: reduce){
+    body, body::before, body::after { animation: none !important; }
+    .highlight{ animation: none; -webkit-text-fill-color: initial; }
+}
+
+/* Only center the title area so other content (paragraphs, lists) remain left-aligned */
+.title-wrap{ text-align: center; }
+h1{
+    border: 3px solid #90e0ef;
     border-radius: 10px;
     padding: 20px;
-    width:180px;
+    display: inline-block; /* keep width stable so letter transforms don't shift layout */
+    max-width: 90%;
     text-align: center;
-    margin: 0px auto;
+    margin: 0.75rem auto;
     font-family: 'Times New Roman', Times, serif;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+    color: #032b43; /* make sure title text is visible after removing background-clip */
+}
+
+/* Per-letter rain/fall animation for the title */
+.rain-title{
+    display: inline-block;
+    letter-spacing: 0.02em;
+}
+.rain-title span{
+    display: inline-block;
+    transform-origin: center top;
+    /* one-time drop animation; 'forwards' keeps final position */
+    animation: letterDrop 0.9s cubic-bezier(.2,.7,.2,1) forwards;
+    opacity: 1;
+    will-change: transform, opacity;
+}
+.rain-title span.space{ width: 0.45em; display:inline-block; }
+
+/* Staggered delays for the drops (looping) */
+.rain-title span:nth-child(1){ animation-delay: 0s; }
+.rain-title span:nth-child(2){ animation-delay: 0.12s; }
+.rain-title span:nth-child(3){ animation-delay: 0.24s; }
+.rain-title span:nth-child(4){ animation-delay: 0.36s; }
+.rain-title span:nth-child(5){ animation-delay: 0.48s; }
+.rain-title span:nth-child(6){ animation-delay: 0.60s; }
+.rain-title span:nth-child(7){ animation-delay: 0.72s; }
+.rain-title span:nth-child(8){ animation-delay: 0.84s; }
+.rain-title span:nth-child(9){ animation-delay: 0.96s; }
+.rain-title span:nth-child(10){ animation-delay: 1.08s; }
+
+@keyframes letterDrop{
+    0%   { transform: translateY(-140px) rotate(-12deg); opacity: 0; }
+    65%  { transform: translateY(8px) rotate(6deg); opacity: 1; }
+    100% { transform: translateY(0) rotate(0); opacity: 1; }
+}
+
+/* Make the effect less jarring on small screens */
+@media (max-width: 600px){
+    .rain-title span{ animation-duration: 1.6s; }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .rain-title span{ animation: none; transform: none; opacity: 1; }
 }
 h2{
     text-align: center;
@@ -28,7 +172,7 @@ h2{
     font-style: italic;
 }
 h3{
-    border: #0096c7, solid, 3px;
+    border: 3px solid #0096c7;
     border-radius: 10px;
     width:100px;
     padding:5px;
@@ -136,4 +280,51 @@ a:active{
     h3{
         margin:0 auto;
     }
+}
+
+/* Rain overlay using only CSS (no JS). Uses repeating-linear-gradient to draw streaks
+     and animates background-position to make them fall. Placed behind content. */
+/* Ensure page content sits above the overlay */
+#container{ position: relative; z-index: 1; }
+
+/* Title-only rain animation (no JS):
+     - Uses repeating-linear-gradient to draw vertical streaks that animate via background-position
+     - Clips the animated background to the text with background-clip:text and transparent fill
+     - Respects prefers-reduced-motion */
+
+/* Ensure page content sits above any decorative layers */
+#container{ position: relative; z-index: 1; }
+
+/* reduced motion for per-letter animation handled later */
+
+@keyframes rainFall{
+    from { background-position: 0 -10px, 0 0; }
+    to   { background-position: 0 40px, 0 0; }
+}
+
+/* Create multiple staggered rain columns using multiple backgrounds on html element */
+html::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.12) 0 1px, transparent 1px 22px),
+        linear-gradient(rgba(255,255,255,0.08) 0 1px, transparent 1px 44px),
+        linear-gradient(transparent, transparent);
+    background-size: 3px 72px, 2px 108px, 100% 100%;
+    background-position: 10% 0, 60% -20px, 0 0;
+    animation: rainColumns 1.8s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes rainColumns{
+    0%   { background-position: 10% 0, 60% -20px, 0 0; }
+    100% { background-position: 10% 120px, 60% 140px, 0 0; }
+}
+
+/* Respect users' reduced motion preference */
+@media (prefers-reduced-motion: reduce){
+    body::before, html::before { animation: none; opacity: 0.3; }
 }
