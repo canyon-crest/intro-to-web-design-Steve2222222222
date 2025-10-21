@@ -198,8 +198,9 @@ a:active{
 /*class rules*/
 .highlight{
     font-weight:bold;
-    background-color:yellow;
+    background-color:rgb(131, 233, 228);
     padding:3px;
+    
 }
 
 #sidebar{
@@ -211,6 +212,9 @@ a:active{
     margin-top: 60px;
     line-height: 2.25em;
 
+}
+#sidebar {
+  transition: all 0.4s ease-in-out;
 }
 #sidebar h3{
     width:200px;
@@ -268,4 +272,20 @@ a:active{
 /* Respect users' reduced motion preference */
 @media (prefers-reduced-motion: reduce){
     body::before { animation: none; opacity: 0.3; }
+}
+@media (max-width: 768px) {
+  #sidebar {
+    float: none;
+    width: 100%;
+    clear: both;
+    margin-top: 20px;
+  }
+  #container {
+    width: 100%;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    transition: all 0.3s ease-in-out;
+  }
 }
