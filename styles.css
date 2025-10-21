@@ -267,8 +267,6 @@ a:active{
     }
 }
 
-/* Cleaned up: removed unused rain overlay/keyframe and duplicate container declarations. */
-/* Respect users' reduced motion preference */
 @media (prefers-reduced-motion: reduce){
     body::before { animation: none; opacity: 0.3; }
 }
